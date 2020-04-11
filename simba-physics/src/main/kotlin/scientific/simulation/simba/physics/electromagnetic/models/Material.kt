@@ -48,6 +48,9 @@ class Material(
     val elements = composition.map { it.first }
 //    val massFractions = elementComposition.map{it.second}
     val ratioWeightMolMass = composition.map { it.second/(it.first.Aeff*amu)  }
+    fun ElectronDensity(): Double{
+        TODO()
+    }
 }
 
 enum class State {

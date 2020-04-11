@@ -1,0 +1,51 @@
+{
+  "id": "simba:data",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "description": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "markdown",
+            "HTML",
+            "plain text"
+          ],
+          "required": true
+        },
+        "value": {
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "plain text"
+            ],
+            "required": true
+          },
+          "value": {
+            "type": "string",
+            "required": true
+          }
+        }
+      }
+    },
+    "links" : {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

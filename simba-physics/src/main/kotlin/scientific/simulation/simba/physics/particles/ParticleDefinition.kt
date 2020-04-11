@@ -1,4 +1,4 @@
-package scientific.simulation.simba.physics.electromagnetic.models
+package scientific.simulation.simba.physics.particles
 
 interface ParticleDefinition{
     val name: String
@@ -21,4 +21,10 @@ interface ParticleDefinition{
     val subType: String
     val anti_encoding: Int
     val magneticMoment: Double
+}
+
+abstract class AbctractElectron : ParticleDefinition
+
+object Electron : AbctractElectron() {
+    TODO()
 }
