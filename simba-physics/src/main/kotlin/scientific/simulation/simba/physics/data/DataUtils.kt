@@ -48,4 +48,3 @@ open class DataSpecification : Scheme() {
     companion object : SchemeSpec<DataSpecification>(::DataSpecification)
 }
 
-

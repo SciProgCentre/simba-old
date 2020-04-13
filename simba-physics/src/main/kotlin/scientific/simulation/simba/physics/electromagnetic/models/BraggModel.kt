@@ -1,10 +1,18 @@
 package scientific.simulation.simba.physics.electromagnetic.models
 
+import hep.dataforge.io.Envelope
+import hep.dataforge.io.IOPlugin
+import hep.dataforge.meta.MetaItem
+import hep.dataforge.tables.RowTable
+import hep.dataforge.tables.io.TextRows
+import hep.dataforge.tables.io.readEnvelope
 import mu.KotlinLogging
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.commons.math3.random.RandomGenerator
+import scientific.simulation.simba.physics.data.TableDataLoader
 import scientific.simulation.simba.physics.particles.Electron
 import scientific.simulation.simba.physics.particles.ParticleDefinition
+import java.nio.file.Path
 import kotlin.math.*
 
 val logger = KotlinLogging.logger {}
@@ -393,3 +401,14 @@ data class ElectronicStoppingPowerCoefficient(
     val x4: Double,
     val x5: Double
 )
+
+
+class ESCPLoader(override val envelope: Envelope): TableDataLoader<ElectronicStoppingPowerCoefficient, Any>() {
+    override fun available(item: MetaItem<*>): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun load(item: MetaItem<*>): ElectronicStoppingPowerCoefficient {
+        TODO("Not yet implemented")
+    }
+}

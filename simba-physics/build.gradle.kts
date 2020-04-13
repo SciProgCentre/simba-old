@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val kotlinVersion = "1.3.61"
 val dataforgeVersion: String by rootProject.extra
+val kmathVersion: String by rootProject.extra
 
 plugins {
     kotlin("jvm") version  "1.3.61"
@@ -25,7 +26,11 @@ dependencies {
     implementation("hep.dataforge:dataforge-workspace-jvm:$dataforgeVersion")
 
     // <<>>
-
+    
+    // << KMath>>
+    api("scientifik:kmath-core-jvm:$kmathVersion")
+    api("scientifik:kmath-prob-jvm:$kmathVersion")
+    // <<>>
 }
 
 tasks.withType<KotlinCompile>().configureEach {

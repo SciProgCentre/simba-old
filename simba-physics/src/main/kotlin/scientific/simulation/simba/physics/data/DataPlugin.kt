@@ -16,21 +16,14 @@ interface DataLoader<T : Any> {
     fun load(item: MetaItem<*>): T
 }
 
-abstract class EnvelopeDataLoader<T: Any>(val io: IOPlugin) : DataLoader<T> {
+interface EnvelopeDataLoader<T: Any> : DataLoader<T> {
+    val envelope: Envelope
 }
 
-open class TableDataLoader<T: Any>(val path: Path, io: IOPlugin): EnvelopeDataLoader<Table<T>>(io){
+abstract class TableDataLoader<T: Any, C: Any>(tableReader: (Envelope) -> Table<C>): EnvelopeDataLoader<T> {
     val table by lazy {
-        val envelope = io.readEnvelopeFile(path) ?: error("Envelope file $path don't exist or can't be read.")
-        val table = TextRows.readEnvelope(envelope)
-    }
-
-    override fun available(item: MetaItem<*>): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun load(item: MetaItem<*>): Table<T> {
-        TODO("Not yet implemented")
+//        val envelope = io.readEnvelopeFile(path) ?: error("Envelope file $path don't exist or can't be read.")
+        val table = tableReader(envelope)
     }
 }
 
