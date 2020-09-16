@@ -1,12 +1,9 @@
-package scientific.simulation.simba.physics.electromagnetic.models
+package scientific.simba.math
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import kotlin.math.sqrt
 
 
-fun Vector3D.test(){
-    println("test extensions")
-}
 
 operator fun Vector3D.times(alpha : Double): Vector3D{
     return Vector3D(alpha, this)
@@ -35,23 +32,19 @@ operator fun Vector3D.times(vector: Vector3D) : Vector3D {
 fun Vector3D.rotateUz(vector: Vector3D): Vector3D {
     // NewUzVector must be normalized !
 
-    var u1 = vector.x;
-    var u2 = vector.y;
-    var u3 = vector.z;
+    val u1 = vector.x;
+    val u2 = vector.y;
+    val u3 = vector.z;
     var up = u1*u1 + u2*u2;
-
-    var x : Double
-    var y : Double
-    var z : Double
 
     if (up>0) {
         up = sqrt(up);
-        var px = this.x
-        var py = this.y
-        var pz = this.z
-        x = (u1 * u3 * px - u2 * py) / up + u1 * pz;
-        y = (u2 * u3 * px + u1 * py) / up + u2 * pz;
-        z = -up * px + u3 * pz;
+        val px = this.x
+        val py = this.y
+        val pz = this.z
+        val x = (u1 * u3 * px - u2 * py) / up + u1 * pz;
+        val y = (u2 * u3 * px + u1 * py) / up + u2 * pz;
+        val z = -up * px + u3 * pz;
         return Vector3D(x,y,z);
     }
 
