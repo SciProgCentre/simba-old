@@ -1,4 +1,5 @@
 
+val kotlinVersion by extra("1.4.10")
 val dataforgeVersion by extra("0.1.7")
 val kmathVersion by extra("0.1.4-dev-1")
 

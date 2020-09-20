@@ -1,11 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "1.3.61"
-val dataforgeVersion: String by rootProject.extra
+val kotlinVersion : String by rootProject.extra
 val kmathVersion: String by rootProject.extra
+val dataforgeVersion: String by rootProject.extra
+
 
 plugins {
-    kotlin("jvm") version  "1.3.61"
+    kotlin("jvm")
 }
 
 dependencies {
