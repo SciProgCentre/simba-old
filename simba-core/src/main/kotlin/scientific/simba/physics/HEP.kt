@@ -21,7 +21,7 @@ open class HEPParticle(
 
 }
 
-interface HEPPhysicalModel{
+interface HEPDiscreteModel{
     val name: String
     fun sampleSecondaries(rnd: RandomGenerator, particle : HEPParticle, element: Element) : List<HEPParticle>
     fun computeCrossSectionPerAtom(energy :Double, element : Element) : Double
@@ -39,9 +39,9 @@ interface HEPPhysicalProcess {
 }
 
 
-abstract class LongStepPhysicsProcess(val physicalModels: Set<HEPPhysicalModel>) : HEPPhysicalProcess {
+abstract class LongStepPhysicsProcess(val discreteModels: Set<HEPDiscreteModel>) : HEPPhysicalProcess {
 
-    abstract fun selectModel(particle : HEPParticle, material : Material) : HEPPhysicalModel
+    abstract fun selectModel(particle : HEPParticle, material : Material) : HEPDiscreteModel
 
     fun computeMicroscopicCrossSection(particle: HEPParticle, material: Material): DoubleArray {
         val model = selectModel(particle, material)

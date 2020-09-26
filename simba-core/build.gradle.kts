@@ -5,7 +5,7 @@ val kotlinVersion : String by rootProject.extra
 val kmathVersion: String by rootProject.extra
 
 plugins {
-    kotlin("jvm") version kotlinVersion
+    id("scientifik.jvm")
 }
 
 dependencies {

@@ -403,12 +403,12 @@ data class ElectronicStoppingPowerCoefficient(
 )
 
 
-class ESCPLoader(override val envelope: Envelope): TableDataLoader<ElectronicStoppingPowerCoefficient, Any>() {
-    override fun available(item: MetaItem<*>): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun load(item: MetaItem<*>): ElectronicStoppingPowerCoefficient {
-        TODO("Not yet implemented")
-    }
-}
+//class ESCPLoader(override val envelope: Envelope): TableDataLoader<ElectronicStoppingPowerCoefficient, Any>() {
+//    override fun available(item: MetaItem<*>): Boolean {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun load(item: MetaItem<*>): ElectronicStoppingPowerCoefficient {
+//        TODO("Not yet implemented")
+//    }
+//}

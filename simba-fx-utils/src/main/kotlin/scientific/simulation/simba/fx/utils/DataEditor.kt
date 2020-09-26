@@ -1,31 +1,34 @@
 package scientific.simulation.simba.fx.utils
 
-import hep.dataforge.tables.MutableTable
-import hep.dataforge.tables.Table
-import hep.dataforge.tables.row
-import hep.dataforge.values.Value
-import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.control.Tab
-import javafx.scene.control.TreeItem
-import javafx.stage.DirectoryChooser
-import scientific.simulation.simba.physics.data.DataSpecification
+
+import hep.dataforge.io.Envelope
+import javafx.collections.FXCollections
+import javafx.scene.Parent
+import scientific.simba.fxutils.packer.EnvelopePacker
+//import scientific.simulation.simba.physics.data.DataSpecification
 import tornadofx.*
 import java.io.File
 
 
-sealed class EditorItem{
+
+
+sealed class EditorItem {
 }
 
-data class TableItem(
-    val meta : DataSpecification,
-    val table: MutableTable<Value>
-) : EditorItem()
+//data class TableItem(
+//    val meta: DataSpecification,
+//    val table: MutableTable<Value>
+//) : EditorItem()
+
+
 
 class MyController : Controller() {
-    val rootDir = SimpleObjectProperty<File>(File("."))
-    val openFiles  = mutableListOf<File>().asObservable()
+
+    val openFiles = mutableListOf<File>().asObservable()
 
     val editorItems = mutableListOf<EditorItem>().asObservable()
+
+    val envelopes = FXCollections.observableList(mutableListOf<Envelope>())
 
 //    val dataSpecification = DataSpecification()
 //    val table = Table<Value> {
@@ -36,27 +39,49 @@ class MyController : Controller() {
 //    }
 }
 
-object EditorItemViewer{
-    fun drawTableItem(item: TableItem, tab: Tab){
-        tab.apply {
-            vbox {
-                tableview {
+//object EditorItemViewer {
+//    fun drawTableItem(item: TableItem, tab: Tab) {
+//        tab.apply {
+//            vbox {
+//                val table = item.table
+//                tableview<Value> {
+//
+//                }
+//            }
+//        }
+//    }
+//}
 
-                }
-            }
-        }
+
+
+object SimbaMetaViewFactory : MetaViewFactory{
+    override fun resolve(envelope: Envelope): MetaView {
+        TODO("Not yet implemented")
     }
+
 }
 
 
-class MyView : View() {
-    private val myController: MyController by inject()
-    private val dirChooser = DirectoryChooser().apply {
-        title = "Choose a root directory with simba data"
+object EmptyDataView : DataView(){
+    override val root: Parent
+        get() = hbox { label("No data") }
+}
+
+object SimbaDataViewFactory : DataViewFactory{
+    override fun resolve(envelope: Envelope): DataView {
+       return EmptyDataView 
     }
+
+}
+
+class MyView : View() {
+    private val envelopeFileController: EnvelopeFileController by inject()
+    private val envelopeController: EnvelopeController by inject()
+
+
     override val root = borderpane {
-        top = menubar{
-            menu ("Create new ..."){
+        top = menubar {
+            menu("Create new ...") {
                 item("Array").action {
 
                 }
@@ -64,61 +89,22 @@ class MyView : View() {
                 item("Tree")
             }
         }
-        left = vbox {
-            button("Change root directory") {
-                action {
-                    val file = dirChooser.showDialog(this@MyView.primaryStage)
-                    if (file != null) {
-                        myController.rootDir.set(file)
-                    }
-                }
-            }
-            treeview<File> {
-                root = TreeItem(myController.rootDir.get())
-                val updateFileTree: (TreeItem<File>) -> Iterable<File>? = {
-                    it.value.listFiles { file ->
-                        (file.isDirectory || file.extension == "df") &&
-                                !file.isHidden
-                    }?.toList()
-                }
-
-                myController.rootDir.onChange {
-                    root = TreeItem(it)
-                    populate(childFactory = updateFileTree)
-                }
-                cellFormat {
-                    text = it.name
-                }
-                populate(childFactory = updateFileTree)
-//                this.
-            }
-        }
+        left = find(EnvelopeFileTree::class).root
         center = hbox {
             tabpane {
-                myController.editorItems.onChange {
-                    if (it.wasAdded()){
-                     for (item in it.addedSubList){
-                         tab(it.toString()) {
-                             when (item){
-                                 is TableItem -> this.apply()
-                             }
-                         }
-                     }
+
+                envelopeController.envelopes.onChange {
+                    when{
+                        it.wasAdded() ->
+                            for (item in it.addedSubList) {
+                                tab(item.toString()){
+                                    add(EnvelopeView(item, SimbaMetaViewFactory, SimbaDataViewFactory))
+                                    //TODO(Tab function)
+                                }
+                            }
                     }
+
                 }
-
-
-//                myController.openFiles.onChange {
-//                    val files = it.addedSubList
-//                    if (it.wasAdded()){
-//                        files.map {
-//                            tab(it.name){
-//
-//                            }
-//                        }
-//                    }
-//                }
-
             }
         }
     }
@@ -127,5 +113,5 @@ class MyView : View() {
 class MyApp : App(MyView::class)
 
 fun main(args: Array<String>) {
-    launch<MyApp>(args)
+    launch<EnvelopePacker>(args)
 }

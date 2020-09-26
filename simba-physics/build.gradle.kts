@@ -6,7 +6,7 @@ val dataforgeVersion: String by rootProject.extra
 
 
 plugins {
-    kotlin("jvm")
+    id("scientifik.jvm")
 }
 
 dependencies {
@@ -25,12 +25,15 @@ dependencies {
     implementation("hep.dataforge:dataforge-meta-jvm:$dataforgeVersion")
     implementation("hep.dataforge:dataforge-tables-jvm:$dataforgeVersion")
     implementation("hep.dataforge:dataforge-workspace-jvm:$dataforgeVersion")
-
     // <<>>
     
     // << KMath>>
     api("scientifik:kmath-core-jvm:$kmathVersion")
     api("scientifik:kmath-prob-jvm:$kmathVersion")
+    // <<>>
+
+    // <<ODF>>
+    implementation("org.jopendocument:jOpenDocument:1.3")
     // <<>>
 }
 

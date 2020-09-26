@@ -1,5 +1,9 @@
-
+plugins {
+    id("scientifik.publish") apply false
+    id("org.jetbrains.changelog") version "0.4.0"
+}
 val kotlinVersion by extra("1.4.10")
+val simbaVesrion by extra ("0.0.1")
 val dataforgeVersion by extra("0.1.7")
 val kmathVersion by extra("0.1.4-dev-1")
 
@@ -13,7 +17,7 @@ allprojects {
 
     }
     group = "scientifik"
-    version = "0.0.1"
+    version = simbaVesrion
 }
 
 

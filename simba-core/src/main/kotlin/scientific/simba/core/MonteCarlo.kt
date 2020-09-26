@@ -126,7 +126,7 @@ class SimulationChain<T>(
 
     private val mutex = Mutex()
     private var number = AtomicLong(0)
-    val number_of_iteration: Long
+    val numberOfIteration: Long
         get() = number.get()
     private var _result: T = space.zero
     var result: T = space.zero
