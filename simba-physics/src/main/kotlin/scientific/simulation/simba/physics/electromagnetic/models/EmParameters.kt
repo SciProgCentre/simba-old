@@ -1,8 +1,4 @@
-package ru.mipt.npm.mcengine.geant4.physics.electromagnetic
 
-import ru.mipt.npm.mcengine.Settings
-import ru.mipt.npm.mcengine.utils.TeV
-import ru.mipt.npm.mcengine.utils.keV
 
 //enum class NuclearFormfactorType {
 //    fNoneNF , // = 0
@@ -19,7 +15,7 @@ import ru.mipt.npm.mcengine.utils.keV
 //
 //}
 
-data class EmParameters  (
+//data class EmParameters  (
 //        val lossFluctuation : Boolean = true,
 //        val buildCSDARange : Boolean = false,
 //        val flagLPM : Boolean = true,
@@ -46,8 +42,8 @@ data class EmParameters  (
 //        val gammaShark : Boolean = false,
 //
 //        val minSubRange : Double = 1.0,
-        val minKinEnergy : Double = 0.1*keV,
-        val maxKinEnergy : Double = 100.0*TeV//,
+//        val minKinEnergy : Double = 0.1*keV,
+//        val maxKinEnergy : Double = 100.0*TeV//,
 //        val maxKinEnergyCSDA : Double = 1.0*GeV,
 //        val lowestElectronEnergy : Double = 1.0*keV,
 //        val lowestMuHadEnergy : Double = 1.0*keV,
@@ -80,4 +76,4 @@ data class EmParameters  (
 //        val nameElectronPIXE : String = "Livermore"
     //G4EmSaturation* emSaturation,
     //G4StateManager* fStateManager,
-) : Settings
+//)

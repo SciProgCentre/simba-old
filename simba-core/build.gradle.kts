@@ -6,6 +6,7 @@ val kmathVersion: String by rootProject.extra
 
 plugins {
     id("scientifik.jvm")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -13,10 +14,11 @@ dependencies {
     implementation(kotlin("reflect"))
     testImplementation(kotlin("test-junit"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
-    compile("org.apache.commons:commons-math3:3.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0")
+    implementation("org.apache.commons:commons-math3:3.6.1")
 
-    compile("io.github.microutils:kotlin-logging:1.8.3")
-    compile("org.slf4j:slf4j-simple:1.7.29")
+    implementation("io.github.microutils:kotlin-logging:1.8.3")
+    implementation("org.slf4j:slf4j-simple:1.7.29")
 
     api("scientifik:kmath-core-jvm:$kmathVersion")
     api("scientifik:kmath-prob-jvm:$kmathVersion")
