@@ -14,6 +14,7 @@ fun Positionable.move(shift : Vector3D){
 
 interface Dynamicable{
     //FIXME(Interface name)
+
     var kineticEnergy: Double
     var momentumDirection: Vector3D
     val totalEnergy: Double
@@ -49,6 +50,24 @@ interface ParticleDefinition{
 //    val subType: String
 
     val magneticMoment: Double
+}
+
+object NeutralFake: ParticleDefinition{
+    override val name: String = "NEUTRAL_FAKE"
+    override val mass: Double = 0.0
+    override val width: Double  = 0.0
+    override val charge: Double  = 0.0
+    override val iParity: Int  = 0
+    override val iConjugation: Int   = 0
+    override val iIsospin: Int = 0
+    override val iIsospinZ: Int = 0
+    override val gParity: Int = 0
+    override val lepton: Int = 0
+    override val baryon: Int = 0
+    override val stable: Boolean = true
+    override val lifetime: Double  = 0.0
+    override val shortlived: Boolean = false
+    override val magneticMoment: Double  = 0.0
 }
 
 

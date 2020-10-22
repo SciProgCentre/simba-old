@@ -41,7 +41,7 @@ interface TrackAcceptor<T > : Publisher<Track<T>> {
     fun accept(track: Track<T>): Boolean
 }
 
-interface PrimaryGenerator<T > : Chain<Flow<T>>
+interface PrimaryGenerator<T> : Chain<Flow<T>>
 
 interface TrackPropagator<T > {
     suspend fun propagate(rnd: RandomGenerator, track: Track<T>): Flow<T>

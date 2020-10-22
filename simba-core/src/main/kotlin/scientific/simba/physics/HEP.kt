@@ -39,7 +39,7 @@ interface HEPPhysicalProcess {
 }
 
 
-abstract class LongStepPhysicsProcess(val discreteModels: Set<HEPDiscreteModel>) : HEPPhysicalProcess {
+abstract class DiscretePhysicsProcess(val discreteModels: Set<HEPDiscreteModel>) : HEPPhysicalProcess {
 
     abstract fun selectModel(particle : HEPParticle, material : Material) : HEPDiscreteModel
 
@@ -56,7 +56,7 @@ abstract class LongStepPhysicsProcess(val discreteModels: Set<HEPDiscreteModel>)
 fun sampleIndx(rnd: RandomGenerator, probability: List<Double>) : Int{
     val norm = probability.sum()
     val normedProbability = probability.map { it /norm }.toMutableList()
-    for (i in 1..normedProbability.size - 1) {
+    for (i in 1 until normedProbability.size) {
         normedProbability[i] = normedProbability[i] + normedProbability[i - 1]
     }
     assert(normedProbability.last() == 1.0)
