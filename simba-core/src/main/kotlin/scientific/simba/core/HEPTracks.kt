@@ -7,11 +7,16 @@ import org.apache.commons.math3.random.RandomGenerator
 import scientific.simba.geometry.Solid
 import scientific.simba.geometry.UniformVolume
 import scientific.simba.physics.*
+import scientific.simba.math.*
+import scientifik.simulation.simba.core.Step
 import scientifik.simulation.simba.core.Track
 import scientifik.simulation.simba.core.TrackPropagator
 import kotlin.math.ln
 
 
+class ParticleStep(val shift: Vector3D) : Step<Particle> {
+    override val secondaries: List<Particle> = emptyList()
+}
 
 class SimpleTrackPropagator(
         val solid: Solid,
@@ -19,15 +24,19 @@ class SimpleTrackPropagator(
         val crossSection : (Particle) -> Double,
         val angularDistribution: (Particle) -> Vector3D
 ) : TrackPropagator<Particle>{
-    override suspend fun propagate(rnd : RandomGenerator, track: Track<Particle>): Flow<Particle> {
+    override fun propagate(rnd : RandomGenerator, track: Track<Particle>): Flow<ParticleStep> {
         return flow{
             val particle = track.item
             do {
                 val sigma = crossSection(particle)
                 val MFP = 1/(sigma*concentration)
                 val range = -MFP*ln(rnd.nextDouble())
+
+                val shift = range*particle.momentumDirection
+
                 particle.move(range)
                 particle.momentumDirection = angularDistribution(particle)
+                emit(ParticleStep(shift))
             } while (solid.inSolid(particle.position))
 
         }
