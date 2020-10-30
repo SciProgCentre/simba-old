@@ -7,7 +7,6 @@ import hep.dataforge.io.readEnvelopeFile
 import hep.dataforge.meta.Scheme
 import hep.dataforge.meta.descriptors.NodeDescriptor
 import hep.dataforge.meta.descriptors.ValueDescriptor
-import hep.dataforge.meta.setProperty
 import hep.dataforge.meta.string
 import hep.dataforge.names.asName
 import hep.dataforge.values.asValue
@@ -98,24 +97,24 @@ open class EnvelopeFileTree() : View(){
     }
 }
 
-fun Scheme.intoForm(form : Form){
-    form.apply {
-        this@intoForm.descriptor?.items?.map {
-            val (name, item) = it
-            when (item){
-                is ValueDescriptor ->
-                    field(name){
-                        val configProperty = this@intoForm.getProperty(name.asName())
-                        textfield(configProperty.string) {
-                          textProperty().addListener {
-                                  obs, old, new ->
-                              this@intoForm.setProperty(name, new.asValue())
-                          }
-                        }
-                    }
-                is NodeDescriptor -> TODO()
-            }
-        }
-    }
-
-}
+//fun Scheme.intoForm(form : Form){
+//    form.apply {
+//        this@intoForm.descriptor?.items?.map {
+//            val (name, item) = it
+//            when (item){
+//                is ValueDescriptor ->
+//                    field(name){
+//                        val configProperty = this@intoForm.getProperty(name.asName())
+//                        textfield(configProperty.string) {
+//                          textProperty().addListener {
+//                                  obs, old, new ->
+//                              this@intoForm.setProperty(name, new.asValue())
+//                          }
+//                        }
+//                    }
+//                is NodeDescriptor -> TODO()
+//            }
+//        }
+//    }
+//
+//}

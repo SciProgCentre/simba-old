@@ -17,65 +17,56 @@ interface Step<T>{
 
 //interface EventSpace<T: Event> : Space<T>
 
-interface Track<T> {
+interface Track<T, S : Step<T>> {
     val id: Long
     val parentId: Long
     val item: T
-    val steps: Flow<Step<T>>
+    val steps: Flow<S>
 }
 
-interface TrackAcceptor<T>  {
-    fun accept(track: Track<T>): Boolean
+interface TrackAcceptor<T, S : Step<T>>  {
+    fun accept(track: Track<T, S>): Boolean
 }
 
 interface PrimaryGenerator<T> : Chain<Flow<T>>
 
-interface TrackPropagator<T> {
-    fun propagate(rnd: RandomGenerator, track: Track<T>): Flow<Step<T>>
+interface TrackPropagator<T, S : Step<T>> {
+    fun propagate(rnd: RandomGenerator, track: Track<T, S>): Flow<S>
 }
 
-//interface Publisher<T> {
-//
-//    val subscribers: MutableSet<(T) -> Unit>
-//
-//    fun send(message: T) {
-//        subscribers.forEach { it.invoke(message) }
-//    }
-//}
 
 
-
-interface Event<T> {
+interface Event<T, S : Step<T>> {
     val id: Long
-    val tracks: Flow<Track<T>>
+    val tracks: Flow<Track<T, S>>
 }
 
 
-class STrack<T>(
+class STrack<T, S : Step<T>>(
     override val id: Long,
     override val parentId: Long,
     override val item: T,
-    private val trackPropagator: TrackPropagator<T>,
+    private val trackPropagator: TrackPropagator<T, S>,
     val rnd: RandomGenerator
-) : Track<T> {
+) : Track<T, S> {
 
-    override val steps: Flow<Step<T>> = trackPropagator.propagate(rnd, this@STrack)
+    override val steps: Flow<S> = trackPropagator.propagate(rnd, this@STrack)
 }
 
 
 
 
-class SEvent<T>(
+class SEvent<T, S : Step<T>>(
     override val id: Long,
     private val primaries: Flow<T>,
-    private val trackAcceptor: suspend (Track<T>) -> Boolean,
-    private val trackPropagator: TrackPropagator<T>,
+    private val trackAcceptor: suspend (Track<T,S>) -> Boolean,
+    private val trackPropagator: TrackPropagator<T,S>,
     val rnd: RandomGenerator
-) : Event<T> {
+) : Event<T, S> {
     private val trackCounter = AtomicLong(0)
 
 
-    suspend fun Track<T>.subscribeBySecondaries(collector: FlowCollector<Track<T>>){
+    suspend fun Track<T, S>.subscribeBySecondaries(collector: FlowCollector<Track<T, S>>){
         steps.onEach {
             step ->
             step.secondaries.forEach {
@@ -88,7 +79,7 @@ class SEvent<T>(
         }
     }
 
-    override val tracks: Flow<Track<T>> = flow<Track<T>> {
+    override val tracks: Flow<Track<T, S>> = flow<Track<T, S>> {
             primaries.buffer().collect{
                 val newTrack =  STrack(trackCounter.incrementAndGet(), 0, it, trackPropagator, rnd)
                 if (trackAcceptor(newTrack)){
@@ -97,55 +88,26 @@ class SEvent<T>(
                 }
             }
     }
-
-
-
-//    @UseExperimental(InternalCoroutinesApi::class)
-//    suspend fun compute(): R {
-//        val primaryTrack = flow {
-//            primaries.buffer().collect {
-//                emit(Track(trackCounter.incrementAndGet(), 0L, it))
-//            }
-//        }
-//        //FIXME(CoroutineScope)
-//        startIteration(primaryTrack, GlobalScope)
-//
-//        return tempResulter()
-//    }
-//
-//    private suspend fun startIteration(tracks: Flow<Track<T>>, coroutineScope: CoroutineScope) {
-//        tracks
-////                .flowOn(Dispatchers.Default) FIXME()
-//                .filter(trackAcceptor)
-//                .map{
-//                    track ->
-//                    trackPropagator
-//                            .propagate(rnd, track)
-//                            .map{Track(trackCounter.incrementAndGet(), track.id, it)}
-////                        trackPostAction(track)
-//                    }
-//                .map { startIteration(it, coroutineScope) }
-//                .launchIn(coroutineScope) // FIXME()
-//    }
-
-
 }
 
-class EventGenerator<T>(
+class EventGenerator<T, S : Step<T>>(
     private val eventCounter: AtomicLong = AtomicLong(0),
     private val primaryGenerator: PrimaryGenerator<T>,
-    private val trackAcceptor: suspend (Track<T>) -> Boolean,
-    private val trackPropagator: TrackPropagator<T>,
+    private val trackAcceptor: suspend (Track<T, S>) -> Boolean,
+    private val trackPropagator: TrackPropagator<T, S>,
     val rnd: RandomGenerator
-) : Chain<Event<T>> {
-    override fun fork(): Chain<Event<T>> {
+) : Chain<Event<T, S>> {
+    override fun fork(): Chain<Event<T, S>> {
         return this
     }
 
 
-    override suspend fun next(): Event<T> {
+    val numberOfEvents : Long
+        get() = eventCounter.get()
+
+    override suspend fun next(): Event<T, S> {
         val primaries = primaryGenerator.next()
-        val event = SEvent<T>(
+        val event = SEvent(
             eventCounter.getAndIncrement(),
             primaries,
             trackAcceptor,
@@ -157,40 +119,52 @@ class EventGenerator<T>(
 
 }
 
-interface Simulation<T> {
-    fun build(): SimulationChain<T>
-}
+//abstract class Simulation<T, S : Step<T>> (private val eventGenerator: Chain<Event<T, S>>){
+//
+//
+//    private val trackAction = HashSet<suspend (Track<T, S>) -> Unit>()
+//
+//    fun onStep(action: suspend (S) -> Unit) : Simulation<T, S>
+//    fun onTrack(action: suspend (Track<T, S>) -> Unit): Simulation<T, S> = this.apply {
+//        trackAction.add(action)
+//    }
+//
+//}
 
 
-class SimulationChain<T>(
-    val space: Space<T>,
-    val eventGenerator: Chain<T>
-) : Chain<T> {
-    override fun fork(): Chain<T> {
-        return SimulationChain(space, eventGenerator.fork())
-    }
 
-    private val mutex = Mutex()
-    private var number = AtomicLong(0)
-    val numberOfIteration: Long
-        get() = number.get()
-    private var _result: T = space.zero
-    var result: T = space.zero
-        get() = with(space) {
-            _result / number.get()
-        }
-        private set
-
-
-    override suspend fun next(): T {
-        val newValue = eventGenerator.next()
-        mutex.withLock {
-            with(space) { _result += newValue }
-            number.incrementAndGet()
-            return newValue
-        }
-    }
-
-
-}
+//interface Simulation<T> {
+//    fun build(): SimulationChain<T>
+//}
+//
+//
+//class SimulationChain<T>(
+//    val space: Space<T>,
+//    val eventGenerator: Chain<T>
+//) : Chain<T> {
+//    override fun fork(): Chain<T> {
+//        return SimulationChain(space, eventGenerator.fork())
+//    }
+//
+//    private val mutex = Mutex()
+//    private var number = AtomicLong(0)
+//    val numberOfIteration: Long
+//        get() = number.get()
+//    private var _result: T = space.zero
+//    var result: T = space.zero
+//        get() = with(space) {
+//            _result / number.get()
+//        }
+//        private set
+//
+//
+//    override suspend fun next(): T {
+//        val newValue = eventGenerator.next()
+//        mutex.withLock {
+//            with(space) { _result += newValue }
+//            number.incrementAndGet()
+//            return newValue
+//        }
+//    }
+//}
 

@@ -18,8 +18,8 @@ object FakeTrackable
 
 class FakeStep(override val secondaries: List<FakeTrackable>) : Step<FakeTrackable>
 
-class FakeTrackPropagator : TrackPropagator<FakeTrackable> {
-    override fun propagate(rnd: RandomGenerator, track: Track<FakeTrackable>): Flow<FakeStep> {
+class FakeTrackPropagator : TrackPropagator<FakeTrackable, FakeStep> {
+    override fun propagate(rnd: RandomGenerator, track: Track<FakeTrackable, FakeStep>): Flow<FakeStep> {
         return flow {
             val n = track.id % 3
             logger.info { "Start propagation of track ${track.id}"}
@@ -39,7 +39,7 @@ class MonteCarloFakeTest {
     fun test(){
         runBlocking {
 
-        val eventGenerator = EventGenerator<FakeTrackable>(
+        val eventGenerator = EventGenerator<FakeTrackable, FakeStep>(
                 primaryGenerator = object : PrimaryGenerator<FakeTrackable> {
                     override fun fork(): Chain<Flow<FakeTrackable>> {
                         return this

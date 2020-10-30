@@ -28,3 +28,6 @@ pluginManagement {
 include(":simba-core")
 include(":simba-physics")
 include(":simba-fx-utils")
+include(":simba-visualisation")
+
+

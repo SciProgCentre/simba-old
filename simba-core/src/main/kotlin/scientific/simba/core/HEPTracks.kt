@@ -23,8 +23,8 @@ class SimpleTrackPropagator(
         val concentration: Double,
         val crossSection : (Particle) -> Double,
         val angularDistribution: (Particle) -> Vector3D
-) : TrackPropagator<Particle>{
-    override fun propagate(rnd : RandomGenerator, track: Track<Particle>): Flow<ParticleStep> {
+) : TrackPropagator<Particle, ParticleStep>{
+    override fun propagate(rnd : RandomGenerator, track: Track<Particle, ParticleStep>): Flow<ParticleStep> {
         return flow{
             val particle = track.item
             do {

@@ -100,68 +100,68 @@ class ObservableColumn<T : Any>(
 
     fun onChange(op: (ListChangeListener.Change<out T>) -> Unit) = data.onChange(op)
 }
-
-class ObservableColumnTable<C : Any>(override val zero: C) : MutableRowTable<C>, MutableColumnTable<C> {
-
-
-
-    override val emptyRow: Row<C>
-        get() = MapRow<C>(
-            columns.map { it.name to zero }.toMap()
-        )
-
-    private val _columns = mutableListOf<Column<C>>().asObservable()
-    override val columns: List<Column<C>> get() = _columns
-
-    val size = _columns.sizeProperty
-
-    override val rows: List<Row<C>> get() = (0..size.value).map{ indx ->
-        MapRow(_columns.map { it.name to it.get(indx) }.toMap())
-    }
-
-    fun onChangeColumns(op: (ListChangeListener.Change<out Column<C>>) -> Unit) = _columns.onChange(op)
-
-    override fun <T : C> getValue(row: Int, column: String, type: KClass<out T>): T? {
-        val value = columns[column]?.get(row)
-        return type.cast(value)
-    }
-
-    private val mutableColumns : List<MutableColumn<C>>?
-    get() {
-        val temp = _columns.map {it as? MutableColumn<C>}.filterNotNull()
-        if (temp.size != _columns.size){
-            return null
-        }
-        return temp
-        }
-
-    override fun addRow(row: Row<C>): Boolean {
-        mutableColumns?.map {
-            val item = row.get(it)
-            if (item != null){
-                it.add(item)
-            } else{
-                it.add(zero)
-            }
-        } ?: return false
-        return true
-    }
-
-    override fun addRows(rows: Collection<Row<C>>): Boolean {
-        mutableColumns?.map {
-            for (row in rows){
-                val item = row.get(it)
-                if (item != null){
-                    it.add(item)
-                } else{
-                    it.add(zero)
-                }
-            }
-        } ?: return false
-        return true
-    }
-
-    override fun addColumn(column: Column<C>)= _columns.add(column)
-
-    override fun addColumns(columns: Collection<Column<C>>) = _columns.addAll(columns)
-}
+//
+//class ObservableColumnTable<C : Any>(override val zero: C) : MutableRowTable<C>, MutableColumnTable<C> {
+//
+//
+//
+//    override val emptyRow: Row<C>
+//        get() = MapRow<C>(
+//            columns.map { it.name to zero }.toMap()
+//        )
+//
+//    private val _columns = mutableListOf<Column<C>>().asObservable()
+//    override val columns: List<Column<C>> get() = _columns
+//
+//    val size = _columns.sizeProperty
+//
+//    override val rows: List<Row<C>> get() = (0..size.value).map{ indx ->
+//        MapRow(_columns.map { it.name to it.get(indx) }.toMap())
+//    }
+//
+//    fun onChangeColumns(op: (ListChangeListener.Change<out Column<C>>) -> Unit) = _columns.onChange(op)
+//
+//    override fun <T : C> getValue(row: Int, column: String, type: KClass<out T>): T? {
+//        val value = columns[column]?.get(row)
+//        return type.cast(value)
+//    }
+//
+//    private val mutableColumns : List<MutableColumn<C>>?
+//    get() {
+//        val temp = _columns.map {it as? MutableColumn<C>}.filterNotNull()
+//        if (temp.size != _columns.size){
+//            return null
+//        }
+//        return temp
+//        }
+//
+//    override fun addRow(row: Row<C>): Boolean {
+//        mutableColumns?.map {
+//            val item = row.get(it)
+//            if (item != null){
+//                it.add(item)
+//            } else{
+//                it.add(zero)
+//            }
+//        } ?: return false
+//        return true
+//    }
+//
+//    override fun addRows(rows: Collection<Row<C>>): Boolean {
+//        mutableColumns?.map {
+//            for (row in rows){
+//                val item = row.get(it)
+//                if (item != null){
+//                    it.add(item)
+//                } else{
+//                    it.add(zero)
+//                }
+//            }
+//        } ?: return false
+//        return true
+//    }
+//
+//    override fun addColumn(column: Column<C>)= _columns.add(column)
+//
+//    override fun addColumns(columns: Collection<Column<C>>) = _columns.addAll(columns)
+//}
