@@ -1,6 +1,5 @@
 package scientific.simba.visualisation
 
-import hep.dataforge.vision.solid.SolidManager
 import hep.dataforge.meta.Scheme
 import hep.dataforge.meta.SchemeSpec
 import hep.dataforge.meta.int
@@ -42,7 +41,7 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
-        json(module = SolidManager.serialModule)
+//        json(module = SolidManager.serialModule)
     }
     install(Routing) {
         get("/event") {

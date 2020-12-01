@@ -1,33 +1,41 @@
-rootProject.name = "simba.kt"
-
 pluginManagement {
-
-    val toolsVersion = "0.5.2"
-
-    plugins {
-        id("kotlinx.benchmark") version "0.2.0-dev-8"
-        id("scientifik.mpp") version toolsVersion
-        id("scientifik.jvm") version toolsVersion
-        id("scientifik.atomic") version toolsVersion
-        id("scientifik.publish") version toolsVersion
-        kotlin("plugin.allopen") version "1.4.10"
-    }
+    val kotlinVersion = "1.4.20"
+    val toolsVersion = "0.7.0"
 
     repositories {
-        mavenLocal()
+//        mavenLocal()
         jcenter()
         gradlePluginPortal()
         maven("https://dl.bintray.com/kotlin/kotlin-eap")
-        maven("https://dl.bintray.com/mipt-npm/scientifik")
-        maven("https://dl.bintray.com/mipt-npm/dev")
         maven("https://dl.bintray.com/kotlin/kotlinx")
+        maven("https://dl.bintray.com/mipt-npm/dataforge")
+        maven("https://dl.bintray.com/mipt-npm/kscience")
+        maven("https://dl.bintray.com/mipt-npm/dev")
+//        mavenCentral()
+//        maven("https://plugins.gradle.org/m2/")
+    }
+
+    plugins {
+        id("ru.mipt.npm.project") version toolsVersion
+        id("ru.mipt.npm.mpp") version toolsVersion
+        id("ru.mipt.npm.jvm") version toolsVersion
+        id("ru.mipt.npm.js") version toolsVersion
+        id("ru.mipt.npm.publish") version toolsVersion
+        kotlin("jvm") version kotlinVersion
+        kotlin("js") version kotlinVersion
+        kotlin("multiplatform") version kotlinVersion
     }
 }
 
+rootProject.name = "simba.kt"
 
-include(":simba-core")
-include(":simba-physics")
-include(":simba-fx-utils")
-include(":simba-visualisation")
+include(
+    ":simba-core",
+    ":simba-physics",
+    ":simba-visualisation"
+)
+
+//include(":simba-fx-utils")
+
 
 

@@ -1,29 +1,30 @@
 plugins {
-    id("scientifik.publish") apply false
-    id("org.jetbrains.changelog") version "0.4.0"
+    id("ru.mipt.npm.project")
 }
-val kotlinVersion by extra("1.4.10")
-val simbaVesrion by extra ("0.0.1")
-val dataforgeVersion by extra("0.1.8")
+
+
+val dataforgeVersion by extra("0.2.0")
 val kmathVersion by extra("0.1.4-dev-1")
 val ktorVersion by extra("1.3.2")
+val fxVersion by extra("14")
 
 allprojects {
     repositories {
-        jcenter()
-        mavenCentral()
-        maven("https://kotlin.bintray.com/kotlinx")
-        maven("https://dl.bintray.com/mipt-npm/dataforge")
-        maven("https://dl.bintray.com/mipt-npm/dev")
-
+        mavenLocal()
+        maven("https://dl.bintray.com/pdvrieze/maven")
+        maven("http://maven.jzy3d.org/releases")
     }
     group = "scientifik"
-    version = simbaVesrion
+    version = "0.0.1"
+
+
 }
 
 
-
 subprojects {
-    version = "0.0.1"
+}
+
+apiValidation {
+    validationDisabled = true
 }
 
