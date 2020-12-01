@@ -9,7 +9,6 @@ import hep.dataforge.meta.transformations.MetaConverter
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.asValue
-import scientific.simba.physics.nist.NISTIsotopeLoader
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.properties.ReadWriteProperty
@@ -132,9 +131,19 @@ fun MutableItemProvider.path(key: Name? = null, default: () -> Path): ReadWriteP
 )
 
 
-fun Context.resolveDataPath(path: Path) = Paths.get(this.content(Context.PROPERTY_TARGET).get("dataLocation".asName()) as? String ?: ".").resolve(path)
+fun Context.resolveDataPath(path: Path): Path {
+    val properties = this.content(Context.PROPERTY_TARGET)
+    val temp = properties.get("dataLocation".asName())
+    return Paths.get(
+        (temp as? MetaItem.ValueItem).string ?: "."
+    )
+        .resolve(path)
+}
 
-fun Context.dataLocation(name: String, default: DataLocation) = this.toMeta().get("properties.$name".asName())?.spec(DataLocation) ?: default
+fun Context.resolveDataPath(path: String) = resolveDataPath(Paths.get(path))
+
+fun Context.dataLocation(name: String, default: DataLocation) =
+    this.toMeta().get("properties.$name".asName())?.spec(DataLocation) ?: default
 
 class DataLocation : Scheme() {
 
@@ -147,7 +156,7 @@ class DataLocation : Scheme() {
     var path by path(Paths.get("."))
     var name by string("")
 
-    fun readEnvelope(context: Context): Envelope?{
+    fun readEnvelope(context: Context): Envelope? {
         val path = context.resolveDataPath(this.path)
         return when (this.type) {
             DataLocation.Type.ZIP -> ZipEnvelopeLoader.open(context, path).load(this.name)

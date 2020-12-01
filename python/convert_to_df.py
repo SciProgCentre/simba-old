@@ -31,25 +31,35 @@ def walk(root_path):
             if temp is not None:
                 dir_items.append((file, path, temp))
         elif file != "meta.json":
-            name, file_type, ext = file.rsplit(".", maxsplit=2)
-            if file_type not in ("data", "meta"):
+            try:
+                name, file_type, ext = file.rsplit(".", maxsplit=2)
+            except Exception:
                 continue
-            if name not in file_items.keys():
+            if file_type  == "meta":
                 file_items[name] = {}
-            file_items[name][file_type] = path
+                file_items[name]["meta"] = path
+
+    for file in files:
+        path = os.path.join(root_path, file)
+        if file != "meta.json" and not os.path.isdir(path):
+            name, ext = file.rsplit(".", maxsplit=1)
+            if name in file_items.keys():
+                file_items[name]["data"] = path
+
+
     return root_meta, file_items, dir_items
 
 
-def add_data_to_zip(zip, meta_path, data_path):
-    with open(meta_path) as fmeta:
-        meta = json.load(meta_path)
-    with open(data_path, "rb") as fdata:
-        data = fdata.read()
-    envelope = Envelope(Meta(meta), data)
+# def add_data_to_zip(zip, meta_path, data_path):
+#     with open(meta_path) as fmeta:
+#         meta = json.load(meta_path)
+#     with open(data_path, "rb") as fdata:
+#         data = fdata.read()
+#     envelope = Envelope(Meta(meta), data)
 
 
 def create_parser():
-    parser = argparse.ArgumentParser(description='Process critical energy.')
+    parser = argparse.ArgumentParser(description='')
     parser.add_argument('target', metavar='DIR', type=str, nargs='+',
                         help='an files for processing')
     parser.add_argument("--output", "-o", action="store", help="Output file name", default="output.zip.df")
@@ -109,7 +119,7 @@ def main():
     with ZipFile(zip_path, mode="w") as zip:
         for dir_ in args.target:
             root_meta, file_items, dir_items = walk(dir_)
-            add_to_zip(zip,"", root_meta, file_items, dir_items)
+            add_to_zip(zip, "", root_meta, file_items, dir_items)
 
 if __name__ == '__main__':
     main()

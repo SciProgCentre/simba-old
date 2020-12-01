@@ -10,25 +10,14 @@ import hep.dataforge.tables.indices
 import kotlinx.io.text.readUtf8String
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
-import simba.physics.Element
-import simba.physics.Ingredient
-import simba.physics.Isotope
+import simba.physics.*
 import simba.physics.data.*
-import simba.physics.material.ElementAnnotation
-import simba.physics.material.IsotopeAnnotation
-import simba.physics.material.IsotopePlugin
+import simba.physics.material.*
 import java.nio.file.Path
 
-data class NISTIsotope(
-    override val name: String,
-    override val Z: Int,
-    override val A: Int,
-    override val atomicMass: Double,
-    override val m: Int
-) : Isotope
 
 class NISTIsotopeLoader(override val description: Meta, val table: Table<Any>) :
-    DataLoader<IsotopeAnnotation, NISTIsotope> {
+    DataLoader<IsotopeAnnotation, CommonIsotope> {
 
     private fun findIndx(annotation: IsotopeAnnotation): Int? {
         val zColumn = table.columns["Z"]
@@ -41,25 +30,25 @@ class NISTIsotopeLoader(override val description: Meta, val table: Table<Any>) :
         return null
     }
 
-    private fun getData(indx: Int): AnnotatedData<IsotopeAnnotation, NISTIsotope> {
+    private fun getData(indx: Int): AnnotatedData<IsotopeAnnotation, CommonIsotope> {
         val name = table.getValue(indx, "Symbol").toString()
         val Z = table.getValue(indx, "Z", Int::class)!!
         val A = table.getValue(indx, "A", Int::class)!!
         val atomicMass = table.getValue(indx, "Relative atomic mass", Double::class)!!
         return AnnotatedData(
             IsotopeAnnotation(Z, A),
-            NISTIsotope(name, Z, A, atomicMass, 0)
+            CommonIsotope(name, Z, A, atomicMass, 0)
         )
     }
 
     override fun available(annotation: IsotopeAnnotation) = findIndx(annotation) != null
 
-    override fun load(annotation: IsotopeAnnotation): AnnotatedData<IsotopeAnnotation, NISTIsotope>? {
+    override fun load(annotation: IsotopeAnnotation): AnnotatedData<IsotopeAnnotation, CommonIsotope>? {
         val indx = findIndx(annotation) ?: return null
         return getData(indx)
     }
 
-    override fun allItem(): Sequence<AnnotatedData<IsotopeAnnotation, NISTIsotope>> {
+    override fun allItem(): Sequence<AnnotatedData<IsotopeAnnotation, CommonIsotope>> {
         return sequence {
             table.rows.forEach {
                 val name = it.getValue("Symbol").toString()
@@ -69,21 +58,21 @@ class NISTIsotopeLoader(override val description: Meta, val table: Table<Any>) :
                 yield(
                     AnnotatedData(
                         IsotopeAnnotation(Z, A),
-                        NISTIsotope(name, Z, A, atomicMass, 0)
+                        CommonIsotope(name, Z, A, atomicMass, 0)
                     )
                 )
             }
         }
     }
 
-    companion object : DataLoaderFactory<IsotopeAnnotation, NISTIsotope> {
+    companion object : DataLoaderFactory<IsotopeAnnotation, CommonIsotope> {
 
         val defaultLocation = dataLocation {
-            path = Path.of("materials.zip.df")
-            name = "isotopes/NIST_isotopes.df"
+            path = Path.of("NIST.zip.df")
+            name = "materials/isotopes.df"
         }
 
-        override fun invoke(meta: Meta, context: Context): DataLoader<IsotopeAnnotation, NISTIsotope> {
+        override fun invoke(meta: Meta, context: Context): DataLoader<IsotopeAnnotation, CommonIsotope> {
             val dataLocation = context.dataLocation("NIST_isotopes", defaultLocation)
             val envelope = dataLocation.readEnvelope(context)
             val table = envelope?.data?.readWith(CSVTableIOFormat(envelope.meta))
@@ -118,7 +107,7 @@ data class NISTElement(
 
 
 @Serializable
-data class NISTIsotopeData(
+data class NISTElementIsotope(
     val A: Int,
     val massFraction: Double
 )
@@ -127,8 +116,9 @@ data class NISTIsotopeData(
 data class NISTElementData(
     val name: String,
     val Z: Int,
-    val composition: List<NISTIsotopeData>
+    val composition: List<NISTElementIsotope>
 )
+
 
 
 
@@ -161,19 +151,79 @@ class NISTElementLoader(
     companion object : DataLoaderFactory<ElementAnnotation, NISTElement> {
 
         val defaultLocation = dataLocation {
-            path = Path.of("materials.zip.df")
-            name = "elements/NIST_elements.df"
+            path = Path.of("NIST.zip.df")
+            name = "materials/elements.df"
         }
 
 
         override fun invoke(meta: Meta, context: Context): DataLoader<ElementAnnotation, NISTElement> {
-            val dataLocation = context.dataLocation("NIST_elements", NISTIsotopeLoader.defaultLocation)
+            val dataLocation = context.dataLocation("NIST_elements", NISTElementLoader.defaultLocation)
             val envelope = dataLocation.readEnvelope(context)
             val data = envelope?.data?.read {
                 Json.decodeFromString<List<NISTElementData>>(readUtf8String())
             }
                 ?: error("NIST elements data from ${context.resolveDataPath(dataLocation.path)} not available")
-            return NISTElementLoader(envelope.meta)
+            val isotopePlugin = context.plugins.get(IsotopePlugin) ?: IsotopePlugin(meta, context)
+            return NISTElementLoader(envelope.meta, data, isotopePlugin)
+        }
+
+    }
+}
+
+
+
+@Serializable
+data class NISTMaterialElement(
+    val Z: Int,
+    val massFraction: Double? = null,
+    val numberOfAtom : Int? = null
+)
+
+@Serializable
+data class NISTMaterial(
+    val name: String,
+    val composition: List<NISTMaterialElement>
+)
+
+
+class NISTMaterialLoader(
+    override val description: Meta,
+    override val data: List<NISTMaterial>,
+    val elementPlugin: ElementPlugin
+) : ListLoader<NISTMaterial, MaterialAnnotation, CommonMaterial>() {
+
+    override val selector: (annotation: MaterialAnnotation, item: NISTMaterial) -> Boolean
+        get() = { annotation: MaterialAnnotation, item: NISTMaterial ->
+            annotation.name == item.name
+        }
+
+    override val convertor: (item: NISTMaterial, annotation: MaterialAnnotation?) -> AnnotatedData<MaterialAnnotation, CommonMaterial>
+        get() = { item: NISTMaterial, annotation: MaterialAnnotation? ->
+            val data = CommonMaterial(item.name, item.composition.map{
+                val elementAnnotation = ElementAnnotation(it.Z)
+                val element = elementPlugin.load(elementAnnotation)?.data ?: error("Can't load isotope ${elementAnnotation} for element ${annotation}")
+                Ingredient(element, it.massFraction ?: 1.0) //TODO(NumberOFAtom proccess)
+            })
+            AnnotatedData(annotation ?: MaterialAnnotation(item.name), data)
+        }
+
+    companion object : DataLoaderFactory<MaterialAnnotation, CommonMaterial> {
+
+        val defaultLocation = dataLocation {
+            path = Path.of("NIST.zip.df")
+            name = "materials/compaund.df"
+        }
+
+
+        override fun invoke(meta: Meta, context: Context): DataLoader<MaterialAnnotation, CommonMaterial> {
+            val dataLocation = context.dataLocation("NIST_compaund", NISTMaterialLoader.defaultLocation)
+            val envelope = dataLocation.readEnvelope(context)
+            val data = envelope?.data?.read {
+                Json.decodeFromString<List<NISTMaterial>>(readUtf8String())
+            }
+                ?: error("NIST materials data from ${context.resolveDataPath(dataLocation.path)} not available")
+            val elementPlugin = context.plugins.get(ElementPlugin) ?: ElementPlugin(meta, context)
+            return NISTMaterialLoader(envelope.meta, data, elementPlugin)
         }
 
     }

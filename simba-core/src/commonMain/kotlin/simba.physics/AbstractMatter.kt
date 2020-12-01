@@ -10,6 +10,14 @@ interface Isotope {
     val m: Int  // isomer
 }
 
+data class CommonIsotope(
+    override val name: String,
+    override val Z: Int,
+    override val A: Int,
+    override val atomicMass: Double,
+    override val m: Int
+) : Isotope
+
 data class Ingredient<T>(val ingredient: T, val massFraction: Double = 1.0)
 
 interface Element {
@@ -19,7 +27,7 @@ interface Element {
     val Aeff: Double
 }
 
-data class SimpleElement(
+data class CommonElement(
     override val name: String,
     override val Z: Int,
     override val Aeff: Double,
@@ -33,6 +41,8 @@ interface Material {
     val name: String
     val composition: List<Ingredient<Element>>
 }
+
+data class CommonMaterial(override val name: String, override val composition: List<Ingredient<Element>>) : Material
 
 val Material.elements
     get() = composition.map { it.ingredient }

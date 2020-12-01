@@ -36,7 +36,7 @@ def compaund(path, output):
                     "name" : name,
                     "composition" : temp
                 })
-                print(name)
+                # print(name)
             except Exception:
                 break
     with open(output, "w") as fout:
@@ -62,7 +62,7 @@ def simple(path, output):
                         }
                     ]
                 })
-                print(name)
+                # print(name)
             except Exception:
                 break
     with open(output, "w") as fout:
@@ -71,8 +71,8 @@ def simple(path, output):
 
 
 def main():
-    # simple(SIMPLE_PATH, "data_src/materials/materials/NIST_simple.data.json")
-    compaund(COMPAUND_PATH, "data_src/materials/materials/NIST_compaund.data.json")
+    simple(SIMPLE_PATH, "data_src/NIST/materials/simple.json")
+    compaund(COMPAUND_PATH, "data_src/NIST/materials/compaund.json")
     return 0
 
 if __name__ == '__main__':

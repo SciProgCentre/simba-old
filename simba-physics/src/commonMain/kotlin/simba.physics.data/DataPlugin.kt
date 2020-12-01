@@ -4,9 +4,9 @@ import hep.dataforge.context.AbstractPlugin
 import hep.dataforge.context.Factory
 import hep.dataforge.meta.Meta
 
-data class AnnotatedData<M : Meta, T : Any>(val annotation: M, val data: T)
+data class AnnotatedData<M : Meta,  out T : Any>(val annotation: M, val data: T)
 
-interface DataLoader<M : Meta, T : Any> {
+interface DataLoader<M : Meta,  out T : Any> {
     val description: Meta
     fun available(annotation: M): Boolean
     fun load(annotation: M): AnnotatedData<M, T>?
@@ -21,7 +21,7 @@ abstract class DataPlugin<M : Meta, T : Any>(meta: Meta) : AbstractPlugin(meta),
 
     abstract val storage: MutableSet<DataLoader<M, T>>
 
-    fun register(factory: DataLoaderFactory<M, T>) {
+    fun register(factory: DataLoaderFactory<M, out T>) {
         storage.add(factory.invoke(context = context));
     }
 

@@ -3,6 +3,8 @@ plugins {
 }
 
 val kmathVersion: String by rootProject.extra
+val explicitApiValue: org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode by rootProject.extra
+
 
 kscience{
     useCoroutines()
@@ -11,6 +13,9 @@ kscience{
 
 
 kotlin {
+
+    explicitApi = explicitApiValue
+
     sourceSets {
         commonMain {
             dependencies {
