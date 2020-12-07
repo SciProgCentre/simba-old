@@ -29,10 +29,7 @@
 //    val magneticMoment: Double
 //}
 //
-//interface PDGID{
-//    val encoding: Int
-//    val anti_encoding: Int
-//}
+
 //
 //
 //abstract class AbctractElectron : ParticleDefinition, PDGID
@@ -50,49 +47,7 @@
 ////    false, "e", magneticMoment = -muB * 1.00115965218076
 ////)
 //
-//object Electron : AbctractElectron() {
-//    override val name: String = "electron"
-//
-//    override val mass: Double = electron_mass_c2
-//
-//    override val width: Double = 0.0*MeV
-//
-//    override val charge: Double = -1.0* eplus
-//
-//    override val iParity: Int  = 1
-//
-//    override val iConjugation: Int = 0
-//
-//    override val iIsospin: Int = 0
-//
-//    override val iIsospinZ: Int = 0
-//
-//    override val gParity: Int = 0
-//
-////    override val pType: String
-//
-//    override val lepton: Int = 1
-//
-//    override val baryon: Int = 0
-//
-//    override val encoding: Int = 11
-//
-//    override val stable: Boolean = true
-//
-//    override val lifetime: Double = -1.0
-//
-////    override val decaytable: Any?
-//
-//    override val shortlived: Boolean = false
-//
-////    override val subType: String
-//
-//    override val anti_encoding: Int = -11
-//
-//    override val magneticMoment: Double = -muB * 1.00115965218076
-//
-//
-//}
+
 //
 //class ParticleGun : PrimaryGenerator {
 //    var definition = Gamma
@@ -117,14 +72,7 @@
 ////
 //
 ////
-////val Positron = ParticlesDefinition(
-////    "e+", electron_mass_c2, 0.0 * MeV, +1.0 * eplus,
-////    1, 0, 0,
-////    0, 0, 0,
-////    "lepton", -1, 0, -11,
-////    true, -1.0, null,
-////    false, "e", magneticMoment = muB * 1.00115965218076
-////)
+
 ////
 ////val Gamma = ParticlesDefinition(
 ////    "gamma", 0.0 * MeV, 0.0 * MeV, 0.0,

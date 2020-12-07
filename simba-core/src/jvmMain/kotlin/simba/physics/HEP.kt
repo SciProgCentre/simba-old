@@ -5,14 +5,30 @@ import org.apache.commons.math3.random.RandomGenerator
 import kotlin.math.sqrt
 import simba.math.times
 
-open class HEPParticle(
+class HEPParticle(
     val definition: ParticleDefinition,
     override var kineticEnergy: Double,
     override var momentumDirection: Vector3D,
-    override var position: Vector3D,
-    var properTime : Double
+    position: Vector3D
 ): Particle {
-    override val totalEnergy: Double
+
+    var properTime : Double = 0.0
+
+    private var position_ : Vector3D = position
+    override fun move(shift: Vector3D) {
+        position_ = shift
+    }
+
+
+    override val position: Vector3D
+    get() = position_
+
+    fun setMomentum(momentum : Vector3D){
+        momentumDirection = momentum.normalize()
+        kineticEnergy = sqrt(momentum.normSq + definition.mass*definition.mass) - definition.mass
+    }
+
+    val totalEnergy: Double
         get() = kineticEnergy + definition.mass
     override val totalMomentum: Double
         get() = sqrt(totalEnergy*totalEnergy - definition.mass*definition.mass)
@@ -21,9 +37,10 @@ open class HEPParticle(
 
 }
 
+fun HEPParticle?.asList() = if (this != null) listOf(this) else  emptyList()
+
 interface HEPDiscreteModel{
-    val name: String
-    fun sampleSecondaries(rnd: RandomGenerator, particle : HEPParticle, element: Element) : List<HEPParticle>
+    fun sampleSecondaries(rnd: RandomGenerator, particle: HEPParticle, element: Element, material: Material? = null) : List<HEPParticle>
     fun computeCrossSectionPerAtom(energy :Double, element : Element) : Double
 }
 
@@ -49,7 +66,7 @@ abstract class DiscretePhysicsProcess(val discreteModels: Set<HEPDiscreteModel>)
     }
 
     fun sampleSecondary(rnd: RandomGenerator, particle: HEPParticle, material: Material, element: Element): List<HEPParticle> {
-        return selectModel(particle, material).sampleSecondaries(rnd, particle, element)
+        return selectModel(particle, material).sampleSecondaries(rnd, particle, element, null)
     }
 }
 

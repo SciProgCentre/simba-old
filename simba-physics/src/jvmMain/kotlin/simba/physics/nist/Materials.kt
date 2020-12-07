@@ -16,10 +16,10 @@ import simba.physics.material.*
 import java.nio.file.Path
 
 
-class NISTIsotopeLoader(override val description: Meta, val table: Table<Any>) :
-    DataLoader<IsotopeAnnotation, CommonIsotope> {
+class NISTIsotopeLoader(override val description: Meta, override val table: Table<Any>) :
+    TableLoader<IsotopeAnnotation, CommonIsotope>() {
 
-    private fun findIndx(annotation: IsotopeAnnotation): Int? {
+    override fun findIndx(annotation: IsotopeAnnotation): Int? {
         val zColumn = table.columns["Z"]
         val aColumn = table.columns["A"]
         zColumn?.indices?.forEach {
@@ -30,7 +30,7 @@ class NISTIsotopeLoader(override val description: Meta, val table: Table<Any>) :
         return null
     }
 
-    private fun getData(indx: Int): AnnotatedData<IsotopeAnnotation, CommonIsotope> {
+    override fun getData(indx: Int): AnnotatedData<IsotopeAnnotation, CommonIsotope> {
         val name = table.getValue(indx, "Symbol").toString()
         val Z = table.getValue(indx, "Z", Int::class)!!
         val A = table.getValue(indx, "A", Int::class)!!
@@ -39,30 +39,6 @@ class NISTIsotopeLoader(override val description: Meta, val table: Table<Any>) :
             IsotopeAnnotation(Z, A),
             CommonIsotope(name, Z, A, atomicMass, 0)
         )
-    }
-
-    override fun available(annotation: IsotopeAnnotation) = findIndx(annotation) != null
-
-    override fun load(annotation: IsotopeAnnotation): AnnotatedData<IsotopeAnnotation, CommonIsotope>? {
-        val indx = findIndx(annotation) ?: return null
-        return getData(indx)
-    }
-
-    override fun allItem(): Sequence<AnnotatedData<IsotopeAnnotation, CommonIsotope>> {
-        return sequence {
-            table.rows.forEach {
-                val name = it.getValue("Symbol").toString()
-                val Z = it.getValue("Z", Int::class)!!
-                val A = it.getValue("A", Int::class)!!
-                val atomicMass = it.getValue("Relative atomic mass", Double::class)!!
-                yield(
-                    AnnotatedData(
-                        IsotopeAnnotation(Z, A),
-                        CommonIsotope(name, Z, A, atomicMass, 0)
-                    )
-                )
-            }
-        }
     }
 
     companion object : DataLoaderFactory<IsotopeAnnotation, CommonIsotope> {

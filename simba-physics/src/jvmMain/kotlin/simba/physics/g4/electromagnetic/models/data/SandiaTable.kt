@@ -1,18 +1,40 @@
-//package ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data
-//
-//
-//import ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data.SandiaTableData.cumulInterval
-//import ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data.SandiaTableData.getSandiaCofPerAtom
-//import ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data.SandiaTableData.ionizationPotentials
-//import ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data.SandiaTableData.nbOfIntervals
-//import ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data.SandiaTableData.sandiaTable
-//import ru.mipt.npm.mcengine.geant4.physics.electromagnetic.vecNbOfAtomsPerVolume
-//import ru.mipt.npm.mcengine.material.Material
-//import ru.mipt.npm.mcengine.utils.eV
-//import ru.mipt.npm.mcengine.utils.keV
-//import kotlin.math.abs
-//import kotlin.math.max
-//import kotlin.math.min
+package simba.physics.g4.electromagnetic.models.data
+
+import simba.physics.Element
+import simba.physics.Material
+import simba.physics.g4.amu
+
+
+data class SandiaCoefficient(
+    val energy: Double,
+    val coefficient: List<Double>
+)
+
+private fun List<SandiaCoefficient>.getCoefficients(energy: Double) = if (energy < this.first().energy) this.first().coefficient else {
+    this.find { energy > it.energy }?.coefficient ?: this.last().coefficient
+}
+
+// TODO(SandiaTable builder and Loader)
+class SandiaTable(
+    val coefficientByElement: Map<Int, List<SandiaCoefficient>>,
+    val coefficientByMaterial: Map<Material, List<SandiaCoefficient>>
+    ) {
+
+    fun sandiaCoefficient(element: Element, energy: Double): List<Double> {
+        val coefficient = coefficientByElement[element.Z]!!
+        val row = coefficient.getCoefficients(energy)
+        val coeff = amu * element.Z * element.Z / element.Aeff
+        return List(4) {
+            coeff * row[it]
+        }
+    }
+
+    fun sandiaCoefficient(material: Material, energy: Double, density: Double): List<Double> {
+        return coefficientByMaterial[material]!!.getCoefficients(energy)
+    }
+}
+
+
 //
 //class SandiaTable(val material: Material) {
 ////TODO(Привести таблицу в человеческий вид)

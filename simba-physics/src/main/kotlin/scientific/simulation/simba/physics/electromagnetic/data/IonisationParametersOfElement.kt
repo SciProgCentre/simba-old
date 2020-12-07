@@ -27,8 +27,6 @@
 //    // obsolete parameters for ionisation
 //    val tau0 = 0.1*Z3* MeV / proton_mass_c2
 //    val taul = 2* MeV / proton_mass_c2
-//    val vFermi = vFermiList[Z.toInt() - 1] //TODO{ограниено 92 элементом}
-//    val lFactor = lFactorList[Z.toInt() - 1]//TODO{ограниено 92 элементом}
 //
 //    // compute the Bethe-Bloch formula for energy = fTaul*particle mass
 //    val meanExcitationEnergy : Double = 1.0 // TODO {NIST import}

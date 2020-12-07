@@ -19,6 +19,10 @@ kotlin {
 
     explicitApi = explicitApiValue
 
+    sourceSets.all {
+        languageSettings.enableLanguageFeature("InlineClasses")
+    }
+
     sourceSets {
         commonMain {
             dependencies {

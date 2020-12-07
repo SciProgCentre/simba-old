@@ -1,11 +1,3 @@
-//package ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data
-//
-//import ru.mipt.npm.mcengine.utils.amu
-//import ru.mipt.npm.mcengine.utils.cm2
-//import ru.mipt.npm.mcengine.utils.g
-//import ru.mipt.npm.mcengine.utils.keV
-//import ru.mipt.npm.mcengine.utils.CSV_DELIMITER
-//
 //// class description
 ////
 //// File for static data of PhotoAbsorption cross section coefficients

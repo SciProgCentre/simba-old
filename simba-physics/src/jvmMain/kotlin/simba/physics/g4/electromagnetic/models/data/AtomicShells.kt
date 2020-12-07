@@ -1,6 +1,18 @@
-//package ru.mipt.npm.mcengine.geant4.physics.electromagnetic.data
-//
-//import ru.mipt.npm.mcengine.utils.eV
+package simba.physics.g4.electromagnetic.models.data
+
+
+
+
+data class AtomicShells(
+    val numberOfElectrons : List<Int>,
+    val bindingEnergies : List<Double>,
+){
+    val totalBindingEnergy :Double
+        get() = bindingEnergies.sum()
+    val size : Int
+        get() =  bindingEnergies.size
+}
+
 //
 //object AtomicShells {
 //    val numberOfShells = listOf( // 101

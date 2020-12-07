@@ -26,9 +26,6 @@ interface ElementLoader : DataLoader<ElementAnnotation, Element> {
 class ElementPlugin(meta: Meta) : IngredientPlugin<ElementAnnotation, Element>(meta), ElementLoader {
     override val tag: PluginTag get() = Companion.tag
 
-    override val storage: MutableSet<DataLoader<ElementAnnotation, Element>> = HashSet()
-
-
     companion object : PluginFactory<ElementPlugin> {
         override val tag: PluginTag = PluginTag("element", group = MATERIAL_GROUP)
         override val type: KClass<out ElementPlugin> = ElementPlugin::class

@@ -43,11 +43,7 @@
 //    }
 //}
 //
-//enum class State {
-//    Undefined,
-//    Solid,
-//    Liquid,
-//    Gas }
+
 //
 //
 //

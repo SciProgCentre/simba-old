@@ -25,12 +25,12 @@ interface IsotopesLoader : DataLoader<IsotopeAnnotation, Isotope> {
 class IsotopePlugin(meta: Meta) : IngredientPlugin<IsotopeAnnotation, Isotope>(meta), IsotopesLoader {
     override val tag: PluginTag get() = Companion.tag
 
-    override val storage: MutableSet<DataLoader<IsotopeAnnotation, Isotope>> = HashSet()
-
-
     companion object : PluginFactory<IsotopePlugin> {
         override val tag: PluginTag = PluginTag("isotope", group = MATERIAL_GROUP)
         override val type: KClass<out IsotopePlugin> = IsotopePlugin::class
         override fun invoke(meta: Meta, context: Context): IsotopePlugin = IsotopePlugin(meta)
     }
 }
+
+val Context.isotope : IsotopePlugin
+    get() = plugins.fetch(IsotopePlugin)

@@ -1,7 +1,6 @@
 package simba.physics
 
 
-
 interface Isotope {
     val name: String
     val Z: Int
@@ -23,9 +22,16 @@ data class Ingredient<T>(val ingredient: T, val massFraction: Double = 1.0)
 interface Element {
     val name: String
     val composition: List<Ingredient<Isotope>>
-    val Z : Int
+    val Z: Int
     val Aeff: Double
 }
+
+val Element.isotopes
+    get() = composition.map { it.ingredient }
+
+val Element.simpleMaterial: Material
+    get() = CommonMaterial(this.name, listOf(Ingredient(this)))
+
 
 data class CommonElement(
     override val name: String,
@@ -34,8 +40,6 @@ data class CommonElement(
     override val composition: List<Ingredient<Isotope>> = emptyList()
 ) : Element
 
-val Element.isotopes
-    get() = composition.map { it.ingredient }
 
 interface Material {
     val name: String
@@ -46,3 +50,11 @@ data class CommonMaterial(override val name: String, override val composition: L
 
 val Material.elements
     get() = composition.map { it.ingredient }
+
+
+enum class State {
+    Undefined,
+    Solid,
+    Liquid,
+    Gas
+}
