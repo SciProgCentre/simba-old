@@ -5,7 +5,6 @@ import hep.dataforge.context.PluginFactory
 import hep.dataforge.context.PluginTag
 import hep.dataforge.meta.Meta
 import hep.dataforge.meta.MetaBase
-import simba.physics.Element
 import simba.physics.Material
 import simba.physics.data.DataLoader
 import simba.physics.data.DataPlugin
@@ -25,18 +24,21 @@ class MaterialAnnotation(val name : String) : MetaBase() {
 
 }
 
-interface MaterialLoader : DataLoader<MaterialAnnotation, Material> {
+interface MaterialsLoader : DataLoader<MaterialAnnotation, Material> {
     operator fun get(name: String) = load(MaterialAnnotation(name))
 }
 
-class MaterialPlugin(meta: Meta) : IngredientPlugin<MaterialAnnotation, Material>(meta), MaterialLoader {
+class MaterialsPlugin(meta: Meta) : IngredientPlugin<MaterialAnnotation, Material>(meta), MaterialsLoader {
     override val tag: PluginTag get() = Companion.tag
 
-    companion object : PluginFactory<MaterialPlugin> {
+    val elements by require(ElementsPlugin)
+
+    companion object : PluginFactory<MaterialsPlugin> {
         override val tag: PluginTag = PluginTag("material", group = MATERIAL_GROUP)
-        override val type: KClass<out MaterialPlugin> = MaterialPlugin::class
-        override fun invoke(meta: Meta, context: Context): MaterialPlugin = MaterialPlugin(meta).apply {
-            require(ElementPlugin)
-        }
+        override val type: KClass<out MaterialsPlugin> = MaterialsPlugin::class
+        override fun invoke(meta: Meta, context: Context): MaterialsPlugin = MaterialsPlugin(meta)
     }
 }
+
+val Context.materials: MaterialsPlugin
+    get() = plugins.fetch(MaterialsPlugin)

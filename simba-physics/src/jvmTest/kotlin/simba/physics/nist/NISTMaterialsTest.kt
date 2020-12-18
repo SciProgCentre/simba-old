@@ -3,9 +3,9 @@ package simba.physics.nist
 import hep.dataforge.context.Context
 import hep.dataforge.context.Global
 import hep.dataforge.names.asName
-import simba.physics.material.ElementPlugin
+import simba.physics.material.ElementsPlugin
 import simba.physics.material.IsotopeAnnotation
-import simba.physics.material.IsotopePlugin
+import simba.physics.material.IsotopesPlugin
 import simba.physics.testConfiguration
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,7 +36,7 @@ class NISTMaterialsTest {
 
     @Test
     fun testAllElements(){
-        val isotopePlugin = IsotopePlugin(context = context)
+        val isotopePlugin = IsotopesPlugin(context = context)
         isotopePlugin.attach(context)
         isotopePlugin.register(NISTIsotopeLoader)
         context.plugins.load(isotopePlugin)
@@ -48,12 +48,12 @@ class NISTMaterialsTest {
 
     @Test
     fun testAllMaterials(){
-        val isotopePlugin = IsotopePlugin(context = context)
+        val isotopePlugin = IsotopesPlugin(context = context)
         isotopePlugin.attach(context)
         isotopePlugin.register(NISTIsotopeLoader)
         context.plugins.load(isotopePlugin)
 
-        val elementPlugin = ElementPlugin(context = context)
+        val elementPlugin = ElementsPlugin(context = context)
         elementPlugin.attach(context)
         elementPlugin.register(NISTElementLoader)
         context.plugins.load(elementPlugin)

@@ -38,7 +38,7 @@ class ParticleGun: ParticleSource<HEPParticle>(){
     }
 
     override suspend fun next(): HEPParticle {
-        return HEPParticle(definition, kineticEnergy, momentumDirection, position, 0.0)
+        return HEPParticle(definition, kineticEnergy, momentumDirection, position)
     }
 
 }

@@ -66,7 +66,7 @@ abstract class DiscretePhysicsProcess(val discreteModels: Set<HEPDiscreteModel>)
     }
 
     fun sampleSecondary(rnd: RandomGenerator, particle: HEPParticle, material: Material, element: Element): List<HEPParticle> {
-        return selectModel(particle, material).sampleSecondaries(rnd, particle, element, null)
+        return selectModel(particle, material).sampleSecondaries(rnd, particle, element, material)
     }
 }
 

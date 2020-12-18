@@ -102,9 +102,8 @@ data class NISTElementData(
 class NISTElementLoader(
     override val description: Meta,
     override val data: List<NISTElementData>,
-    val isotopePlugin: IsotopePlugin
+    val isotopeLoader: IsotopesLoader
 ) : ListLoader<NISTElementData, ElementAnnotation, NISTElement>() {
-
     override val selector: (annotation: ElementAnnotation, item: NISTElementData) -> Boolean
         get() = { annotation: ElementAnnotation, item: NISTElementData ->
             if (annotation.name != null) {
@@ -118,7 +117,7 @@ class NISTElementLoader(
         get() = { item: NISTElementData, annotation: ElementAnnotation? ->
             val data = NISTElement(item.name, item.Z, item.composition.map{
                 val isotopeAnnotation = IsotopeAnnotation(item.Z, it.A)
-                val isotope = isotopePlugin.load(isotopeAnnotation)?.data ?: error("Can't load isotope ${isotopeAnnotation} for element ${annotation}")
+                val isotope = isotopeLoader.load(isotopeAnnotation)?.data ?: error("Can't load isotope ${isotopeAnnotation} for element ${annotation}")
                 Ingredient(isotope, it.massFraction)
             })
             AnnotatedData(annotation ?: ElementAnnotation(item.Z, item.name), data)
@@ -139,8 +138,7 @@ class NISTElementLoader(
                 Json.decodeFromString<List<NISTElementData>>(readUtf8String())
             }
                 ?: error("NIST elements data from ${context.resolveDataPath(dataLocation.path)} not available")
-            val isotopePlugin = context.plugins.get(IsotopePlugin) ?: IsotopePlugin(meta, context)
-            return NISTElementLoader(envelope.meta, data, isotopePlugin)
+            return NISTElementLoader(envelope.meta, data, context.isotopes)
         }
 
     }
@@ -165,7 +163,7 @@ data class NISTMaterial(
 class NISTMaterialLoader(
     override val description: Meta,
     override val data: List<NISTMaterial>,
-    val elementPlugin: ElementPlugin
+    val elementsLoader: ElementsLoader
 ) : ListLoader<NISTMaterial, MaterialAnnotation, CommonMaterial>() {
 
     override val selector: (annotation: MaterialAnnotation, item: NISTMaterial) -> Boolean
@@ -177,7 +175,7 @@ class NISTMaterialLoader(
         get() = { item: NISTMaterial, annotation: MaterialAnnotation? ->
             val data = CommonMaterial(item.name, item.composition.map{
                 val elementAnnotation = ElementAnnotation(it.Z)
-                val element = elementPlugin.load(elementAnnotation)?.data ?: error("Can't load isotope ${elementAnnotation} for element ${annotation}")
+                val element = elementsLoader.load(elementAnnotation)?.data ?: error("Can't load isotope ${elementAnnotation} for element ${annotation}")
                 Ingredient(element, it.massFraction ?: 1.0) //TODO(NumberOFAtom proccess)
             })
             AnnotatedData(annotation ?: MaterialAnnotation(item.name), data)
@@ -192,14 +190,14 @@ class NISTMaterialLoader(
 
 
         override fun invoke(meta: Meta, context: Context): DataLoader<MaterialAnnotation, CommonMaterial> {
+            //TODO(resolve location of simple data)
             val dataLocation = context.dataLocation("NIST_compaund", NISTMaterialLoader.defaultLocation)
             val envelope = dataLocation.readEnvelope(context)
             val data = envelope?.data?.read {
                 Json.decodeFromString<List<NISTMaterial>>(readUtf8String())
             }
                 ?: error("NIST materials data from ${context.resolveDataPath(dataLocation.path)} not available")
-            val elementPlugin = context.plugins.get(ElementPlugin) ?: ElementPlugin(meta, context)
-            return NISTMaterialLoader(envelope.meta, data, elementPlugin)
+            return NISTMaterialLoader(envelope.meta, data, context.elements)
         }
 
     }

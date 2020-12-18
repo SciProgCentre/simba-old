@@ -3,6 +3,7 @@ plugins {
 }
 
 val kmathVersion: String by rootProject.extra
+val dataforgeVersion: String by rootProject.extra
 val explicitApiValue: org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode by rootProject.extra
 
 
@@ -19,6 +20,16 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation("hep.dataforge:dataforge-context:$dataforgeVersion")
+                implementation("hep.dataforge:dataforge-data:$dataforgeVersion")
+                implementation("hep.dataforge:dataforge-io:$dataforgeVersion")
+                implementation("hep.dataforge:dataforge-meta:$dataforgeVersion")
+                implementation("hep.dataforge:dataforge-tables:$dataforgeVersion")
+                implementation("hep.dataforge:dataforge-workspace:$dataforgeVersion")
+
+                api("scientifik:kmath-core:$kmathVersion")
+                api("scientifik:kmath-prob:$kmathVersion")
+                api("scientifik:kmath-geometry:$kmathVersion")
             }
         }
         jvmMain{

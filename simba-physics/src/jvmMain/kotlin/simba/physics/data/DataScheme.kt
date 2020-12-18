@@ -9,6 +9,7 @@ import hep.dataforge.meta.transformations.MetaConverter
 import hep.dataforge.names.Name
 import hep.dataforge.names.asName
 import hep.dataforge.values.asValue
+import hep.dataforge.values.string
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.properties.ReadWriteProperty
@@ -112,7 +113,7 @@ val MetaConverter.Companion.path: MetaConverter<Path>
             when (item) {
                 is MetaItem.NodeItem -> item.node[Meta.VALUE_KEY].value ?: error("Can't convert node to a value")
                 is MetaItem.ValueItem -> item.value
-            }.string
+            }?.string
         )
 
         override fun objectToMetaItem(obj: Path): MetaItem<*> = MetaItem.ValueItem(obj.toString().asValue())

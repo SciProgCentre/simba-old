@@ -3,7 +3,7 @@ pluginManagement {
     val toolsVersion = "0.7.0"
 
     repositories {
-//        mavenLocal()
+        mavenLocal()
         jcenter()
         gradlePluginPortal()
         maven("https://dl.bintray.com/kotlin/kotlin-eap")
@@ -32,7 +32,9 @@ rootProject.name = "simba.kt"
 include(
     ":simba-core",
     ":simba-physics",
-    ":simba-visualisation"
+    ":simba-visualisation",
+    // examples
+    ":examples:visualization"
 )
 
 //include(":simba-fx-utils")

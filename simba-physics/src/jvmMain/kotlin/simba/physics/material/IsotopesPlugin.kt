@@ -22,15 +22,15 @@ interface IsotopesLoader : DataLoader<IsotopeAnnotation, Isotope> {
     operator fun get(Z: Int, A: Int) = load(IsotopeAnnotation(Z,A))
 }
 
-class IsotopePlugin(meta: Meta) : IngredientPlugin<IsotopeAnnotation, Isotope>(meta), IsotopesLoader {
+class IsotopesPlugin(meta: Meta) : IngredientPlugin<IsotopeAnnotation, Isotope>(meta), IsotopesLoader {
     override val tag: PluginTag get() = Companion.tag
 
-    companion object : PluginFactory<IsotopePlugin> {
+    companion object : PluginFactory<IsotopesPlugin> {
         override val tag: PluginTag = PluginTag("isotope", group = MATERIAL_GROUP)
-        override val type: KClass<out IsotopePlugin> = IsotopePlugin::class
-        override fun invoke(meta: Meta, context: Context): IsotopePlugin = IsotopePlugin(meta)
+        override val type: KClass<out IsotopesPlugin> = IsotopesPlugin::class
+        override fun invoke(meta: Meta, context: Context): IsotopesPlugin = IsotopesPlugin(meta)
     }
 }
 
-val Context.isotope : IsotopePlugin
-    get() = plugins.fetch(IsotopePlugin)
+val Context.isotopes : IsotopesPlugin
+    get() = plugins.fetch(IsotopesPlugin)

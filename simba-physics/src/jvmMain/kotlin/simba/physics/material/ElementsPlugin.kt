@@ -19,18 +19,19 @@ class ElementAnnotation(val Z: Int, val name : String? = null) : MetaBase() {
 
 }
 
-interface ElementLoader : DataLoader<ElementAnnotation, Element> {
+interface ElementsLoader : DataLoader<ElementAnnotation, Element> {
     operator fun get(Z: Int, name: String? = null) = load(ElementAnnotation(Z, name))
 }
 
-class ElementPlugin(meta: Meta) : IngredientPlugin<ElementAnnotation, Element>(meta), ElementLoader {
+class ElementsPlugin(meta: Meta) : IngredientPlugin<ElementAnnotation, Element>(meta), ElementsLoader {
     override val tag: PluginTag get() = Companion.tag
-
-    companion object : PluginFactory<ElementPlugin> {
+    val isotopes by require(IsotopesPlugin)
+    companion object : PluginFactory<ElementsPlugin> {
         override val tag: PluginTag = PluginTag("element", group = MATERIAL_GROUP)
-        override val type: KClass<out ElementPlugin> = ElementPlugin::class
-        override fun invoke(meta: Meta, context: Context): ElementPlugin = ElementPlugin(meta).apply {
-            require(IsotopePlugin)
-        }
+        override val type: KClass<out ElementsPlugin> = ElementsPlugin::class
+        override fun invoke(meta: Meta, context: Context): ElementsPlugin = ElementsPlugin(meta)
     }
 }
+
+val Context.elements : ElementsPlugin
+    get() = plugins.fetch(ElementsPlugin)
