@@ -8,8 +8,8 @@ import hep.dataforge.tables.Table
 import hep.dataforge.tables.get
 import hep.dataforge.tables.getValue
 import hep.dataforge.tables.indices
-import simba.physics.data.*
-import simba.physics.material.ElementAnnotation
+import simba.data.*
+import simba.data.material.ElementAnnotation
 import java.nio.file.Path
 import kotlin.reflect.KClass
 
@@ -22,7 +22,7 @@ data class ElectromagneticParameters(
 )
 
 
-interface ElectromagneticParametersLoader : DataLoader<ElementAnnotation, ElectromagneticParameters>{
+interface ElectromagneticParametersLoader : DataLoader<ElementAnnotation, ElectromagneticParameters> {
     operator fun get(Z: Int) = load(ElementAnnotation(Z))
 }
 

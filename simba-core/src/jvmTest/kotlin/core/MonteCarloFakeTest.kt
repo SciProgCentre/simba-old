@@ -2,13 +2,13 @@ package simba.core
 
 import kotlinx.coroutines.*
 import mu.KotlinLogging
-import scientifik.kmath.chains.Chain
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kscience.kmath.chains.Chain
+import kscience.kmath.prob.RandomGenerator
 import org.apache.commons.math3.random.JDKRandomGenerator
-import org.apache.commons.math3.random.RandomGenerator
 
 private val logger = KotlinLogging.logger {}
 
@@ -29,7 +29,7 @@ class FakeTrackPropagator : TrackPropagator<FakeTrackable, FakeStep> {
     }
 }
 
-val rnd = JDKRandomGenerator(0)
+val rnd = RandomGenerator.default
 
 class MonteCarloFakeTest {
 

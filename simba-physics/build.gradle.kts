@@ -26,12 +26,17 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(project(":simba-core"))
                 implementation("hep.dataforge:dataforge-context:$dataforgeVersion")
                 implementation("hep.dataforge:dataforge-data:$dataforgeVersion")
                 implementation("hep.dataforge:dataforge-io:$dataforgeVersion")
                 implementation("hep.dataforge:dataforge-meta:$dataforgeVersion")
                 implementation("hep.dataforge:dataforge-tables:$dataforgeVersion")
                 implementation("hep.dataforge:dataforge-workspace:$dataforgeVersion")
+
+                api("kscience.kmath:kmath-core:$kmathVersion")
+                api("kscience.kmath:kmath-prob:$kmathVersion")
+                api("kscience.kmath:kmath-geometry:$kmathVersion")
             }
         }
         jvmMain{
@@ -49,10 +54,10 @@ kotlin {
 //                implementation("hep.dataforge:dataforge-tables-jvm:$dataforgeVersion")
 //                implementation("hep.dataforge:dataforge-workspace-jvm:$dataforgeVersion")
 
-                api("scientifik:kmath-core-jvm:$kmathVersion")
-                api("scientifik:kmath-prob-jvm:$kmathVersion")
+//                api("scientifik:kmath-core-jvm:$kmathVersion")
+//                api("scientifik:kmath-prob-jvm:$kmathVersion")
 
-                api(project(":simba-core"))
+//                api(project(":simba-core"))
             }
         }
     }

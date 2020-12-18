@@ -6,7 +6,7 @@ plugins {
 
 
 val dataforgeVersion by extra("0.2.1-dev-4")
-val kmathVersion by extra("0.1.4-dev-1")
+val kmathVersion by extra("0.2.0-dev-2")
 val ktorVersion by extra("1.3.2")
 val fxVersion by extra("14")
 val explicitApiValue by extra(ExplicitApiMode.Warning)
