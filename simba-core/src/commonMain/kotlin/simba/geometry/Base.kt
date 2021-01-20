@@ -1,6 +1,7 @@
 package simba.geometry
 
 
+import kscience.kmath.geometry.Euclidean3DSpace.norm
 import kscience.kmath.geometry.Vector3D
 import kscience.kmath.geometry.r
 import kotlin.math.abs
@@ -51,7 +52,7 @@ class Sphere(
  */
 class Orb(val radius : Double) : Solid {
     override fun inSolid(point: Vector3D): Boolean {
-        return point.r < radius
+        return point.norm() < radius
     }
 }
 

@@ -18,9 +18,7 @@ interface Track<T, S : Step<T>> {
     val steps: Flow<S>
 }
 
-interface TrackAcceptor<T, S : Step<T>>  {
-    fun accept(track: Track<T, S>): Boolean
-}
+typealias TrackAcceptor<T, S> = suspend (Track<T,S>) -> Boolean
 
 interface PrimaryGenerator<T> : Chain<Flow<T>>
 
@@ -29,10 +27,24 @@ interface TrackPropagator<T, S : Step<T>> {
 }
 
 
+//interface EventHandler<T, S : Step<T>>{
+//    fun handleStep(step: Step<T>) = {}
+//    suspend fun handleTrack(track: Track<T, S>) = {
+//        track.steps.onEach(::handleStep).collect {  }
+//    }
+//}
 
 interface Event<T, S : Step<T>> {
     val id: Long
     val tracks: Flow<Track<T, S>>
+
+//    suspend fun compute(handler: EventHandler<T,S>){
+//        tracks.
+//            onEach { it.steps.onEach(handler::handleStep)}
+//        collect() {
+//            it.steps.onEach().collect {  }
+//        }
+//    }
 }
 
 

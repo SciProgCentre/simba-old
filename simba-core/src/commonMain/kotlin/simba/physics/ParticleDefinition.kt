@@ -59,3 +59,48 @@ abstract class AbstractGamma : ParticleDefinition, PDGID{
     override val anti_encoding: Int = 22
 }
 abstract class AbstractProton : ParticleDefinition, PDGID
+
+
+class UnitsDefinition(val units: UnitsSpace, val consts : ConstsSpace){
+
+
+    val ELECTRON  = object : AbstractElectron() {
+        override val name: String = "electron"
+        override val mass: Double = consts.electron_mass_c2
+        override val width: Double = 0.0 * units.MeV
+        override val charge: Double = consts.electron_charge
+        override val iParity: Int = 1
+        override val iConjugation: Int = 0
+        override val iIsospin: Int = 0
+        override val iIsospinZ: Int = 0
+        override val gParity: Int = 0
+        //    override val pType: String
+        override val lepton: Int = 1
+        override val baryon: Int = 0
+        override val stable: Boolean = true
+        override val lifetime: Double = -1.0
+        //    override val decaytable: Any?
+        override val shortlived: Boolean = false
+        //    override val subType: String
+        override val magneticMoment: Double = -consts.muB * 1.00115965218076
+    }
+
+    val POSITRON =  object : AbstractPositron(){
+        override val name: String = "positron"
+        override val mass: Double = consts.electron_mass_c2
+        override val width: Double = 0.0 * units.MeV
+        override val charge: Double = -consts.electron_charge
+        override val iParity: Int =1
+        override val iConjugation: Int =0
+        override val iIsospin: Int =0
+        override val iIsospinZ: Int =0
+        override val gParity: Int = 0
+        override val lepton: Int = -1
+        override val baryon: Int = 0
+        override val stable: Boolean = true
+        override val lifetime: Double = -1.0
+        override val shortlived: Boolean = false
+        override val magneticMoment: Double = consts.muB * 1.00115965218076
+
+    }
+}

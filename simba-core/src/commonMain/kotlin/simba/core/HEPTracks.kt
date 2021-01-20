@@ -24,18 +24,18 @@ class ParticleStep(val shift: Vector3D) : Step<Particle> {
 class SimpleTrackPropagator(
     val solid: Solid,
     val concentration: Double,
-    val crossSection : (Particle) -> Double,
+    val crossSection: (Particle) -> Double,
     val angularDistribution: (Particle) -> Vector3D
-) : TrackPropagator<Particle, ParticleStep>{
-    override fun propagate(rnd : RandomGenerator, track: Track<Particle, ParticleStep>): Flow<ParticleStep> {
-        return flow{
+) : TrackPropagator<Particle, ParticleStep> {
+    override fun propagate(rnd: RandomGenerator, track: Track<Particle, ParticleStep>): Flow<ParticleStep> {
+        return flow {
             val particle = track.item
             do {
                 val sigma = crossSection(particle)
-                val MFP = 1/(sigma*concentration)
-                val range = -MFP*ln(rnd.nextDouble())
+                val MFP = 1 / (sigma * concentration)
+                val range = -MFP * ln(rnd.nextDouble())
 
-                val shift = range*particle.momentumDirection
+                val shift = range * particle.momentumDirection
 
                 particle.move(range)
                 particle.momentumDirection = angularDistribution(particle)
@@ -44,36 +44,43 @@ class SimpleTrackPropagator(
 
         }
     }
+}
+
+data class HEPStep(
+    val energyDeposit: Double,
+    override val secondaries: List<HEPParticle> = emptyList()
+) : Step<HEPParticle> {
 
 }
 
-
-//
 //class SimpleHEPTrackPropagator(
-//        val volume : UniformVolume,
-//        val processes : List<LongStepPhysicsProcess>,
-//        val rnd: RandomGenerator
-//) : TrackPropagator<HEPParticle>{
-//    override suspend fun propagate(track: Track<HEPParticle>): Flow<HEPParticle> {
-//        return flow{
+//    val volume: UniformVolume,
+//    val processes: List<DiscretePhysicsProcess>,
+//) : TrackPropagator<HEPParticle, HEPStep> {
+//
+//
+//
+//
+//    override suspend fun propagate(rnd: RandomGenerator, track: Track<HEPParticle, HEPStep>): Flow<HEPStep> {
+//        return flow {
 //            val material = volume.material
 //            val n_elem = material.elements.size
 //            val n_proc = processes.size
 //            val particle = track.item
 //            val density = volume.density
 //            val avogadro = 1 // TODO(Create units undefined const)
-//            do{
+//            do {
 //                val table = processes
-//                        .map {
-//                            val n = material.composition.map { it.massFraction *avogadro*density/it.ingredient.Aeff}
-//                            val sigma = it.computeMicroscopicCrossSection(particle, material)
-//                            sigma.zip(n){si, ni -> ni*si}
-//                        }
-//                val SigmaElem = List(n_elem){ i -> table.map {it[i]}.sum()}
+//                    .map {
+//                        val n = material.composition.map { it.massFraction * avogadro * density / it.ingredient.Aeff }
+//                        val sigma = it.computeMicroscopicCrossSection(particle, material)
+//                        sigma.zip(n) { si, ni -> ni * si }
+//                    }
+//                val SigmaElem = List(n_elem) { i -> table.map { it[i] }.sum() }
 //                val i_elem = sampleIndx(rnd, SigmaElem)
 //                val SigmaProc = table[i_elem]
 //                val i_proc = sampleIndx(rnd, SigmaProc)
-//                val MFP = 1/SigmaProc[i_proc]
+//                val MFP = 1 / SigmaProc[i_proc]
 //                particle.move(MFP)
 //                val process = processes[i_proc]
 //                val element = material.elements[i_elem]
@@ -85,9 +92,6 @@ class SimpleTrackPropagator(
 //    }
 //
 //}
-//
-//
-
 
 
 //class Selector(val generator: RandomGenerator) {

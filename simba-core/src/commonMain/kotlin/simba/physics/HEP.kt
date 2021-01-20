@@ -78,7 +78,7 @@ fun sampleIndx(rnd: RandomGenerator, probability: List<Double>) : Int{
     for (i in 1 until normedProbability.size) {
         normedProbability[i] = normedProbability[i] + normedProbability[i - 1]
     }
-//    assert(normedProbability.last() == 1.0) TODO(assert)
+    check(normedProbability.last() == 1.0)
     return normedProbability.indexOfFirst { it > rnd.nextDouble()}
 }
 

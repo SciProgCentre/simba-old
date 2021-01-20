@@ -7,9 +7,10 @@ import kscience.kmath.geometry.Euclidean3DSpace.norm
 import kscience.kmath.geometry.Vector3D
 import kscience.kmath.geometry.r
 import kscience.kmath.operations.sqr
+import kscience.kmath.prob.RandomGenerator
 import kotlin.math.sqrt
 
-
+fun RandomGenerator.vector3d() = Vector3D(nextDouble(), nextDouble(), nextDouble())
 
 operator fun Vector3D.times(alpha : Double): Vector3D{
     return this.context.run { multiply(this@times, alpha)}
@@ -59,6 +60,9 @@ fun Vector3D.rotateUz(vector: Vector3D): Vector3D {
         }      // phi=0  theta=pi
     return this
 }
+
+
+
 
 /** Null vector (coordinates: 0, 0, 0). */
 val Vector3D.ZERO : Vector3D
