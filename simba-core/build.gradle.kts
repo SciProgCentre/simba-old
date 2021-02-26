@@ -1,10 +1,10 @@
 plugins {
-    id("ru.mipt.npm.mpp")
+    id("ru.mipt.npm.gradle.mpp")
 }
 
 val kmathVersion: String by rootProject.extra
 val dataforgeVersion: String by rootProject.extra
-val explicitApiValue: org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode by rootProject.extra
+
 
 
 kscience{
@@ -14,9 +14,6 @@ kscience{
 
 
 kotlin {
-
-    explicitApi = explicitApiValue
-
     sourceSets {
         commonMain {
             dependencies {

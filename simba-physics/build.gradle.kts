@@ -1,13 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
-    id("ru.mipt.npm.mpp")
+    id("ru.mipt.npm.gradle.mpp")
 }
 
 
 val kmathVersion: String by rootProject.extra
 val dataforgeVersion: String by rootProject.extra
-val explicitApiValue: ExplicitApiMode by rootProject.extra
 
 kscience{
     useCoroutines()
@@ -17,7 +16,6 @@ kscience{
 
 kotlin {
 
-    explicitApi = explicitApiValue
 
     sourceSets.all {
         languageSettings.enableLanguageFeature("InlineClasses")
